@@ -31,13 +31,13 @@
 	</int-feed:inbound-channel-adapter>
 	
 	
-    <int:channel id="fileWriterChannel" />
+    <!-- <int:channel id="fileWriterChannel" />
     
     <int-file:outbound-channel-adapter id="writer"
         channel="fileWriterChannel"
-        directory="rssFiles"
+        directory="rssFiles-root"
         mode="APPEND"
-        append-new-line="true" />
+        append-new-line="true" /> -->
 	
 		
 </beans>
