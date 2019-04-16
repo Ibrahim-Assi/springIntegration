@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -14,46 +15,36 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.channel.MessageChannels;
+import org.springframework.integration.file.dsl.FileWritingMessageHandlerSpec;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.support.FileExistsMode;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 
+import ims.health.rss.RssItem;
+
 @Configuration
 public class FileWriterIntegrationConfig {  
 	
 
-	  @Configuration
-	  @ImportResource("classpath:/integration-config.xml")
-	  public static class XmlConfiguration {}
+	@Configuration
+	@ImportResource("classpath:/integration-config.xml")
+	public static class XmlConfiguration {}
 	  
-	
-	//@Profile("integration-config.xml")
+	 
 	@Bean
 	public IntegrationFlow fileWriterFlow() {
 	 return IntegrationFlows
-	 .from(MessageChannels.direct("aljazeeraChannel"))  
+	 .from(MessageChannels.direct("aljazeeraChannel")) 
+	 //TODO: should be convert object to xml tag
+	 .<SyndEntry,String >transform(t ->  new RssItem(t.getTitle(), t.getDescription()+"", t.getLink(), t.getPublishedDate(),t.getCategories(),t.getComments()).toString())
+	 .channel(MessageChannels.direct("fileWriterChannel"))
 	 .handle(
-	    rssItem -> {
-					  
-					 SyndEntry entry = (SyndEntry) rssItem.getPayload();
-					 LocalDateTime ldt = LocalDateTime.ofInstant(entry.getPublishedDate().toInstant(),ZoneId.systemDefault());
-					 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					 System.out.println(" create folder for date:"+entry.getPublishedDate());
-					 
-					 Files
-					 .outboundAdapter(new File("/rssFiles-root/"+ldt.format(formatter)))
-					 .fileExistsMode(FileExistsMode.APPEND)
-					 .appendNewLine(true);
-					 
-			        }
-	     
-//			 Files
-//			 .outboundAdapter(new File("rssFiles"))
-//			 .fileExistsMode(FileExistsMode.APPEND)
-//			 .appendNewLine(true)
-			 )
-			        
+			 Files
+			 .outboundAdapter(new File("rssFiles-root")) //TODO: create subfolders   
+			 .fileExistsMode(FileExistsMode.APPEND)
+			 .appendNewLine(true)
+			 )         
 	 .get();
 	}
 	

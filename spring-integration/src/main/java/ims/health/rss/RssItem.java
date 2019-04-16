@@ -1,32 +1,40 @@
 package ims.health.rss;
 
+import java.util.Date;
+import java.util.List;
+
 public class RssItem {
 	
 	 private String title;
 	 private String description;
-	 private String content;
 	 private String link;
-	 private String pubDate;
-	 private String category;
-	 private String comments;
-	 private String guid;
+	 private Date   pubDate;
+	 private List   categories;
+	 private String comments; 
 	 
 	 
 	public RssItem() {
 		super();
 	}
+	
+	
 
-	public RssItem(String title, String description, String content, String link, String pubDate, String category,
-			String comments, String guid) {
+	public RssItem(String title) {
+		super();
+		this.title = title;
+	}
+
+//RssItem(String, SyndContent, String, Date, List<SyndCategory>, String) is undefined
+
+	public RssItem(String title, String description, String link, Date pubDate, List categories,
+			String comments) {
 		super();
 		this.title = title;
 		this.description = description;
-		this.content = content;
 		this.link = link;
 		this.pubDate = pubDate;
-		this.category = category;
+		this.categories = categories;
 		this.comments = comments;
-		this.guid = guid;
 	}
 
 	public String getTitle() {
@@ -45,14 +53,6 @@ public class RssItem {
 		this.description = description;
 	}
 
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
 	public String getLink() {
 		return link;
 	}
@@ -61,21 +61,25 @@ public class RssItem {
 		this.link = link;
 	}
 
-	public String getPubDate() {
+	public Date getPubDate() {
 		return pubDate;
 	}
 
-	public void setPubDate(String pubDate) {
+	public void setPubDate(Date pubDate) {
 		this.pubDate = pubDate;
 	}
 
-	public String getCategory() {
-		return category;
+	public List getCategories() {
+		return categories;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+
+
+	public void setCategories(List categories) {
+		this.categories = categories;
 	}
+
+
 
 	public String getComments() {
 		return comments;
@@ -84,19 +88,12 @@ public class RssItem {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-
-	public String getGuid() {
-		return guid;
-	}
-
-	public void setGuid(String guid) {
-		this.guid = guid;
-	}
+ 
 
 	@Override
 	public String toString() {
-		return "RssItem [title=" + title + ", description=" + description + ", content=" + content + ", link=" + link
-				+ ", pubDate=" + pubDate + ", category=" + category + ", comments=" + comments + ", guid=" + guid + "]";
+		return "RssItem [title=" + title + ", description=" + description + ", link=" + link
+				+ ", pubDate=" + pubDate + ", categories=" + categories + ", comments=" + comments + "]";
 	}
 	 
 	

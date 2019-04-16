@@ -29,39 +29,6 @@ public class Appliaction
 	
     public static void main( String[] args ) throws  Exception
     {
-    	 
-    	 new SpringApplication(FileWriterIntegrationConfig.class).run(args);
- 
-        
-     /*
-         // ***** keep this code temporary until finish development IntegrationFlow  
-         // ***********************
-          
-          
-    	@SuppressWarnings("resource")
-    	AbstractApplicationContext context = new ClassPathXmlApplicationContext("integration-config.xml");
-		AppConfig appConfig = (AppConfig) context.getBean("appConf");
-		
-		System.out.println("Rss link:"+ appConfig.getRssLink());
-		System.out.println("rootPath:"+appConfig.getRootFolderPath());
-		
-		
-		// direct channel feed
-		
-		 try {            
-	            DirectChannel channel = context.getBean("aljazeeraChannel", DirectChannel.class);
-	            channel.subscribe(new MessageHandler() {
-	                
-	                public void handleMessage(Message<?> message) throws MessagingException {
-	                    SyndEntry entry = (SyndEntry) message.getPayload();
-	                    System.out.println(entry.getPublishedDate() + " - " + entry.getTitle());
-	                }
-	            });
-	            Thread.sleep(5000);
-	        } finally {
-	            context.close();
-	        }
-	        
-	  */
+    	  new SpringApplication(FileWriterIntegrationConfig.class).run(args);
     }
 }
