@@ -1,15 +1,22 @@
 package ims.health.rss;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class RssItem {
-	
-	 private String title;
-	 private String description;
-	 private String link;
-	 private Date   pubDate;
-	 private List   categories;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement 
+public class RssItem  implements Serializable{
+	  
+	 private String uri; 
+	 private String title;  
+	 private String description; 
+	 private String link;  
+	 private Date   pubDate; 
 	 private String comments; 
 	 
 	 
@@ -17,30 +24,35 @@ public class RssItem {
 		super();
 	}
 	
-	
+	  
 
-	public RssItem(String title) {
-		super();
-		this.title = title;
-	}
-
-//RssItem(String, SyndContent, String, Date, List<SyndCategory>, String) is undefined
-
-	public RssItem(String title, String description, String link, Date pubDate, List categories,
+	public RssItem(String uri,String title, String description, String link, Date pubDate, 
 			String comments) {
 		super();
+		this.uri = uri;
 		this.title = title;
 		this.description = description;
 		this.link = link;
 		this.pubDate = pubDate;
-		this.categories = categories;
 		this.comments = comments;
 	}
 
+	
+
+	public String getUri() {
+		return uri;
+	}
+ 
+	@XmlAttribute(name="uri")
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+ 
 	public String getTitle() {
 		return title;
 	}
-
+	 
+	@XmlElement(name="title")
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -49,6 +61,7 @@ public class RssItem {
 		return description;
 	}
 
+	@XmlElement(name="description")
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -57,6 +70,7 @@ public class RssItem {
 		return link;
 	}
 
+	@XmlElement(name="link")
 	public void setLink(String link) {
 		this.link = link;
 	}
@@ -65,26 +79,17 @@ public class RssItem {
 		return pubDate;
 	}
 
+	@XmlElement(name="pubDate")
 	public void setPubDate(Date pubDate) {
 		this.pubDate = pubDate;
 	}
-
-	public List getCategories() {
-		return categories;
-	}
-
-
-
-	public void setCategories(List categories) {
-		this.categories = categories;
-	}
-
 
 
 	public String getComments() {
 		return comments;
 	}
 
+	@XmlElement(name="comments")
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
@@ -93,7 +98,7 @@ public class RssItem {
 	@Override
 	public String toString() {
 		return "RssItem [title=" + title + ", description=" + description + ", link=" + link
-				+ ", pubDate=" + pubDate + ", categories=" + categories + ", comments=" + comments + "]";
+				+ ", pubDate=" + pubDate + ", comments=" + comments + "]";
 	}
 	 
 	
