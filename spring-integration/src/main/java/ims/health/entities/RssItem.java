@@ -1,15 +1,12 @@
-package ims.health.rss;
+package ims.health.entities;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Date; 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement 
+ 
+@XmlRootElement (namespace = "ims.health.entities",name="rssItem")
 public class RssItem  implements Serializable{
 	  
 	 private String uri; 
@@ -18,7 +15,7 @@ public class RssItem  implements Serializable{
 	 private String link;  
 	 private Date   pubDate; 
 	 private String comments; 
-	 
+	 private String category;
 	 
 	public RssItem() {
 		super();
@@ -26,8 +23,7 @@ public class RssItem  implements Serializable{
 	
 	  
 
-	public RssItem(String uri,String title, String description, String link, Date pubDate, 
-			String comments) {
+	public RssItem(String uri,String title, String description, String link, Date pubDate, String comments,String category) {
 		super();
 		this.uri = uri;
 		this.title = title;
@@ -35,9 +31,19 @@ public class RssItem  implements Serializable{
 		this.link = link;
 		this.pubDate = pubDate;
 		this.comments = comments;
+		this.category = category;
 	}
 
 	
+
+	public String getCategory() {
+		return category;
+	}
+
+	@XmlElement(name="category")
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
 	public String getUri() {
 		return uri;
