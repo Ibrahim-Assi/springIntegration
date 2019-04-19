@@ -1,7 +1,11 @@
 package ims.health.configrations;
 
 import java.io.File; 
-import javax.xml.bind.JAXBException; 
+import javax.xml.bind.JAXBException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource; 
@@ -11,8 +15,10 @@ import org.springframework.integration.dsl.channel.MessageChannels;
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.support.FileExistsMode;
 import org.springframework.integration.handler.LoggingHandler;
+import org.springframework.integration.handler.LoggingHandler.Level;
 
 import com.rometools.rome.feed.synd.SyndEntry;
+ 
 import ims.health.entities.RssItem;
 import ims.health.tools.DateTool;
 import ims.health.tools.XmlTool;
@@ -25,6 +31,11 @@ public class FileWriterIntegrationConfig {
 	@Configuration
 	@ImportResource("classpath:/integration-config.xml")// TODO: should be replaced with DSL style
 	public static class XmlConfiguration {}
+	
+    private static Logger logger = LoggerFactory.getLogger(FileWriterIntegrationConfig.class);
+	
+	@Value("${rss.rootFolder.dir}")
+	private String RSS_FOLDER;
 	  
 	 
 	@Bean
@@ -35,13 +46,13 @@ public class FileWriterIntegrationConfig {
 	 .channel(MessageChannels.direct("fileWriterChannel"))
 	 .handle(
 		 Files
-		 .outboundAdapter(new File("rssFiles-root"))  
+		 .outboundAdapter(new File(RSS_FOLDER))  
 		 .autoCreateDirectory(true)
 		 .fileNameGenerator(message -> generateFileName(message.getPayload().toString()))
 		 .fileExistsMode(FileExistsMode.APPEND)
 		 .appendNewLine(true)
 		 )   
-	// .log(LoggingHandler.Level.WARN, "test.category", m -> m.getHeaders().getId())
+	 //.log(LoggingHandler.Level.INFO,l -> "Link:  "+((SyndEntry)l.getPayload()).getLink())
 	 .get();
 	}
 	

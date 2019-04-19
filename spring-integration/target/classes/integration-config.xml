@@ -12,14 +12,7 @@
     http://www.springframework.org/schema/integration/file
     http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
 	http://www.springframework.org/schema/integration/feed http://www.springframework.org/schema/integration/feed/spring-integration-feed.xsd">
-
-	<!--
-	 <bean id="appConf" class="ims.health.configrations.AppConfig">
-		<property name="rssLink" value="https://www.aljazeera.net/aljazeerarss/a7c186be-1baa-4bd4-9d80-a84db769f779/73d0e1b4-532f-45ef-b135-bfdff8b8cab9" />
-		<property name="rootFolderPath" value="/out" />
-	</bean>  -->
-	
-	  
+ 
 
 	<int:channel id="aljazeeraChannel"/>
 	<int-feed:inbound-channel-adapter id="feedAdapter" channel="aljazeeraChannel" auto-startup="true"
