@@ -52,7 +52,7 @@
 			<artifactId>spring-integration-feed</artifactId>
 			<scope>compile</scope>
 		</dependency> 
-		 
+		
 	
   </dependencies>
    

@@ -3,22 +3,20 @@ package ims.health.configrations;
 import java.io.File; 
 import javax.xml.bind.JAXBException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource; 
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.channel.MessageChannels; 
 import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.support.FileExistsMode;
 import org.springframework.integration.handler.LoggingHandler;
-import org.springframework.integration.handler.LoggingHandler.Level;
-
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import com.rometools.rome.feed.synd.SyndEntry;
- 
 import ims.health.entities.RssItem;
 import ims.health.tools.DateTool;
 import ims.health.tools.XmlTool;
@@ -31,33 +29,42 @@ public class FileWriterIntegrationConfig {
 	@Configuration
 	@ImportResource("classpath:/integration-config.xml")// TODO: should be replaced with DSL style
 	public static class XmlConfiguration {}
-	
-    private static Logger logger = LoggerFactory.getLogger(FileWriterIntegrationConfig.class);
+	 
 	
 	@Value("${rss.rootFolder.dir}")
-	private String RSS_FOLDER;
+	private String RSS_FOLDER_DIR;
 	  
-	 
+ 
 	@Bean
 	public IntegrationFlow fileWriterFlow() {
 	 return IntegrationFlows
 	 .from(MessageChannels.direct("aljazeeraChannel"))  
+	 .log(LoggingHandler.Level.INFO,l -> "Link:  "+((SyndEntry)l.getPayload()).getLink())// TODO: should be set as final step on the flow
 	 .<SyndEntry,String >transform(t -> generateXml(t))
+	 .channel(MessageChannels.executor(threadPoolTaskExecutor()))
 	 .channel(MessageChannels.direct("fileWriterChannel"))
 	 .handle(
 		 Files
-		 .outboundAdapter(new File(RSS_FOLDER))  
+		 .outboundAdapter(new File(RSS_FOLDER_DIR))  
 		 .autoCreateDirectory(true)
 		 .fileNameGenerator(message -> generateFileName(message.getPayload().toString()))
 		 .fileExistsMode(FileExistsMode.APPEND)
 		 .appendNewLine(true)
-		 )   
-	 //.log(LoggingHandler.Level.INFO,l -> "Link:  "+((SyndEntry)l.getPayload()).getLink())
+		 )    
 	 .get();
 	}
 	
 	 
-	
+	 
+	@Bean
+	  public TaskExecutor threadPoolTaskExecutor() {
+	    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+	    executor.setThreadNamePrefix("Rss_Thread_");
+	    executor.setMaxPoolSize(5);
+	    executor.setCorePoolSize(5);
+	    executor.setQueueCapacity(22);
+	    return executor;
+	  }
 	
 
 	private String generateFileName(String xmlStr)  {
@@ -76,7 +83,6 @@ public class FileWriterIntegrationConfig {
 	}
 	
 	
-	
 	private String generateXml(SyndEntry entry)  {
 		String xmlStr="";
 		try {
@@ -88,7 +94,7 @@ public class FileWriterIntegrationConfig {
 		catch(JAXBException e) {
 			System.err.println("Error in FileWriterIntegrationConfig.generateXml: ");
 			e.printStackTrace();
-		}
+		} 
 		
 		return xmlStr;
 	}
