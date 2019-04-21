@@ -41,14 +41,15 @@ public class FileWriterIntegrationConfig {
 	@Bean
 	public IntegrationFlow fileWriterFlow() {
 	 return IntegrationFlows
-			 .from(new FeedEntryMessageSource(RSS_Link, "news"), e -> e.poller(p -> p.fixedDelay(100)))
-		        .enrichHeaders(h -> h.header("source", "aljazeera.news"))
-		        .channel("aljazeeraChannel") 
-	 .log(LoggingHandler.Level.INFO,l -> "Link:  "+((SyndEntry)l.getPayload()).getLink())// TODO: should be set as final step on the flow
+	 .from(new FeedEntryMessageSource(RSS_Link, "news"), e -> e.poller(p -> p.fixedDelay(100)))
+	 .enrichHeaders(h -> h.header("source", "aljazeera.news"))
+	 .channel("aljazeeraChannel") 
 	 .<SyndEntry,String >transform(t -> generateXml(t))
 	 .channel(MessageChannels.executor(threadPoolTaskExecutor()))
 	 .channel(MessageChannels.direct("fileWriterChannel"))
      .handle(targetDirectory()) 
+	 .channel("aljazeeraChannel") 
+	 .log(LoggingHandler.Level.INFO,l -> "Link:  "+((SyndEntry)l.getPayload()).getLink())
 	 .get();
 	} 
 	
